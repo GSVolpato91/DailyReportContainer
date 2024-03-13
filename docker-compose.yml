@@ -1,0 +1,30 @@
+# Specify version
+version: "3.9"
+# Specify each Dockerfile
+services:
+  # Container for Apache2 and Java (arbitrarily named web)
+  web:
+    build: ./web          # Relative path of the folder where the Dockerfile is stored
+    image: "myreportimage:web"  # Container image name to be configured
+    ports:                # Configure port forwarding
+      - 80:80
+      - 443:443
+    links:                # Specify the container on which this container depends and the name of that container
+      - "db:db_container"
+    container_name: "web_report_container" # Specify the name of this container
+  # Container for MySQL (arbitrarily named db)
+  db:
+    build: ./db
+    image: "myreportimage:db"
+    ports:
+      - 4306:3306
+    expose:               # Specify port number to communicate with other containers
+      - 3306
+    container_name: "db_report_container"
+    
+    volumes:              # Set up data persistence
+      - db_data:/var/lib/mysql       # Volume name: Container's directory
+
+# Set the volume
+volumes:
+  db_data:
